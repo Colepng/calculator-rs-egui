@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
+
 use eframe::egui;
 
 fn main() -> Result<(), eframe::Error> {
@@ -16,21 +17,6 @@ fn main() -> Result<(), eframe::Error> {
         Box::new(|_cc| Box::new(MyApp::default())),
     )
 }
-
-// struct MyApp {
-//     name: String,
-//     age: u32,
-// }
-//
-// impl Default for MyApp {
-//     fn default() -> Self {
-//         Self {
-//             name: "Arthur".to_owned(),
-//             age: 42,
-//         }
-//     }
-// }
-//
 
 // TODO: In the feuature the best way to do this would to have a string as the input and parse the
 // string
@@ -54,6 +40,11 @@ impl Default for MyApp<'_> {
 // The parser
 fn calulate(_input: &str) {}
 
+// Checks if the last input was an operator 
+fn check_if_operator(input: &str) -> bool {
+    matches!(input.chars().last(), Some('+') | Some('-') | Some('*') | Some('/'))
+}
+
 impl eframe::App for MyApp<'_> {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
@@ -67,7 +58,7 @@ impl eframe::App for MyApp<'_> {
                         self.input.push('8')
                     } else if ui.button("9").clicked() {
                         self.input.push('9');
-                    } else if ui.button("*").clicked() {
+                    } else if ui.button("*").clicked() && !check_if_operator(&self.input) {
                         self.input.push('*');
                     }
                 });
@@ -79,7 +70,7 @@ impl eframe::App for MyApp<'_> {
                         self.input.push('5');
                     } else if ui.button("6").clicked() {
                         self.input.push('6');
-                    } else if ui.button("-").clicked() {
+                    } else if ui.button("-").clicked() && !check_if_operator(&self.input) {
                         self.input.push('-');
                     }
                 });
@@ -91,7 +82,7 @@ impl eframe::App for MyApp<'_> {
                         self.input.push('2')
                     } else if ui.button("3").clicked() {
                         self.input.push('3')
-                    } else if ui.button("+").clicked() {
+                    } else if ui.button("+").clicked() && !check_if_operator(&self.input) {
                         self.input.push('+');
                     }
                 });
@@ -103,8 +94,8 @@ impl eframe::App for MyApp<'_> {
                         self.input.push('.');
                     } else if ui.button("=").clicked() {
                         calulate(&self.input);
-                    } else if ui.button("/").clicked() {
-                        self.input.push('/');
+                    } else if ui.button("/").clicked() && !check_if_operator(&self.input) {
+                            self.input.push('/');
                     }
                 });
             }
