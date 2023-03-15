@@ -1,7 +1,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-use std::{isize, result};
-
 use eframe::egui;
 
 fn main() -> Result<(), eframe::Error> {
@@ -65,50 +63,86 @@ impl MyApp {
         // turn into a complex number
         // let mut result_float: f64 = 0.0;
         let mut result: isize;
-        for (index, operator) in self.operators.clone().chars().enumerate() {
-            let pos_1: usize;
-            let pos_2: usize;
-            match operator {
-                '*' => {
-                    println!("index {index}");
-                    if index == self.nums.len()-1 {
-                        pos_1 = index - 1;
-                        pos_2 = index; 
-                    } else if index == 0 {
-                        pos_1 = index;
-                        pos_2 = index + 1;
-                    } else {
-                        pos_1 = index - 1;
-                        pos_2 = index + 1;
-                    }
+        // found problem: remove operator but the iter is not removeing it so its still
+        // iteratinf over it
+        while !self.operators.is_empty() {
+            for (index, operator) in self.operators.clone().chars().enumerate() {
+            println!("operators {:#?}, nums {:#?}", self.operators, self.nums);
+                let pos_1: usize = index;
+                let pos_2: usize = index + 1;
+                match operator {
+                    '*' => {
+                        println!("index {index}");
                         result = self.nums[pos_1] * self.nums[pos_2];
                         self.nums.remove(pos_1);
                         self.nums[pos_1] = result;
-                        if index == self.operators.len() {
+                        if index + 1 == self.operators.len() {
                             self.operators.pop();
+                            break;
                         } else {
                             self.operators.remove(index);
+                            break;
                         }
+                    }
+
+                    _ => {
+                        // todo!()
+                    }
                 }
-                // '/' => {
-                //     let num_1: isize = self.nums[0];
-                //     let num_2: isize = self.nums[1];
-                //     result_float = num_1 as f64 / num_2 as f64;
-                //
-                // }
-                _ => {
-                    todo!()
+            }
+
+
+            for (index, operator) in self.operators.clone().chars().enumerate() {
+            println!("operators {:#?}, nums {:#?}", self.operators, self.nums);
+                let pos_1: usize = index;
+                let pos_2: usize = index + 1;
+                match operator {
+                    '+' => {
+                        println!("index {index}");
+                        result = self.nums[pos_1] + self.nums[pos_2];
+                        self.nums.remove(pos_1);
+                        self.nums[pos_1] = result;
+                        if index + 1 == self.operators.len() {
+                            self.operators.pop();
+                            break;
+                        } else {
+                            self.operators.remove(index);
+                            break;
+                        }
+                    }
+
+                    '-' => {
+                        println!("index {index}");
+                        result = self.nums[pos_1] - self.nums[pos_2];
+                        self.nums.remove(pos_1);
+                        self.nums[pos_1] = result;
+                        if index + 1 == self.operators.len() {
+                            self.operators.pop();
+                            break;
+                        } else {
+                            self.operators.remove(index);
+                            break;
+                        }
+                    }
+                    // '/' => {
+                    //     let num_1: isize = self.nums[0];
+                    //     let num_2: isize = self.nums[1];
+                    //     result_float = num_1 as f64 / num_2 as f64;
+                    //
+                    // }
+                    _ => {
+                        // todo!()
+                    }
                 }
             }
         }
-        // if result != 0 {
-        //     ValueCalculated::Number(result)
-        // } else {
-        //     ValueCalculated::Float(result_float)
-        // }
         self.nums[0]
     }
 }
+//     ValueCalculated::Number(result)
+// } else {
+//     ValueCalculated::Float(result_float)
+// }
 
 // fn find_operator(input: &str, starting_pos: usize) {
 //     for i in ['*', '/'] {
@@ -198,7 +232,7 @@ impl eframe::App for MyApp {
                 } else if ui.button(".").clicked() {
                     self.input.push('.');
                 } else if ui.button("=").clicked() {
-                    self.operator_pos = self.input.len() + 1;
+                    self.operator_pos = self.input.len() + 2;
                     self.append_num();
                     self.display = format!("{}", self.calulate());
                     println!("{:#?}\n{:#?}", self.nums, self.operators);
