@@ -51,7 +51,7 @@ impl MyApp {
     //
     fn append_num(&mut self) {
         // if self.input.len() !=
-        if let Ok(num) = self.input[self.last_operator_pos..self.operator_pos - 1].parse::<isize>()
+        if let Ok(num) = self.input[self.last_operator_pos..self.operator_pos].parse::<isize>()
         {
             println!("{num}");
             self.nums.push(num);
@@ -188,7 +188,8 @@ impl eframe::App for MyApp {
                     self.input.push('*');
                     // self.num_of_opeators += 1;
                     self.operators.push('*');
-                    self.operator_pos = self.input.len();
+                    println!("{}", self.input);
+                    self.operator_pos = self.input.len()-1;
                     self.append_num();
                     self.last_operator_pos = self.input.len();
                 }
@@ -204,7 +205,7 @@ impl eframe::App for MyApp {
                 } else if ui.button("-").clicked() && !check_if_operator(&self.input) {
                     self.input.push('-');
                     self.operators.push('-');
-                    self.operator_pos = self.input.len();
+                    self.operator_pos = self.input.len()-1;
                     self.append_num();
                     self.last_operator_pos = self.input.len();
                 }
@@ -220,7 +221,7 @@ impl eframe::App for MyApp {
                 } else if ui.button("+").clicked() && !check_if_operator(&self.input) {
                     self.input.push('+');
                     self.operators.push('+');
-                    self.operator_pos = self.input.len();
+                    self.operator_pos = self.input.len()-1;
                     self.append_num();
                     self.last_operator_pos = self.input.len();
                 }
@@ -232,7 +233,7 @@ impl eframe::App for MyApp {
                 } else if ui.button(".").clicked() {
                     self.input.push('.');
                 } else if ui.button("=").clicked() {
-                    self.operator_pos = self.input.len() + 2;
+                    self.operator_pos = self.input.len();
                     self.append_num();
                     self.display = format!("{}", self.calulate());
                     println!("{:#?}\n{:#?}", self.nums, self.operators);
@@ -240,10 +241,11 @@ impl eframe::App for MyApp {
                     self.operators = "".to_owned();
                     self.nums = vec![];
                     self.operator_pos = 0;
+                    self.last_operator_pos = 0;
                 } else if ui.button("/").clicked() && !check_if_operator(&self.input) {
                     self.input.push('/');
                     self.operators.push('/');
-                    self.operator_pos = self.input.len();
+                    self.operator_pos = self.input.len()-1;
                     self.append_num();
                     self.last_operator_pos = self.input.len();
                 }
